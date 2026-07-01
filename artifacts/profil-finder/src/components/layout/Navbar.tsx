@@ -21,7 +21,6 @@ export function Navbar() {
   const navLinks = [
     { href: "/", label: "Startseite" },
     { href: "/profile", label: "Profile" },
-    { href: "/create-profile", label: "Profil erstellen" },
     { href: "/for-companies", label: "Für Unternehmen" },
     { href: "/how-it-works", label: "So funktioniert es" },
     { href: "/contact", label: "Kontakt" },

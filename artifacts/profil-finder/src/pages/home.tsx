@@ -46,11 +46,6 @@ export default function Home() {
                   Profile ansehen
                 </Button>
               </Link>
-              <Link href="/create-profile">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto text-white border-white hover:bg-white/10 text-base font-semibold">
-                  Profil erstellen
-                </Button>
-              </Link>
               <Link href="/for-companies">
                 <Button size="lg" variant="ghost" className="w-full sm:w-auto text-white hover:bg-white/10 text-base font-semibold">
                   Für Unternehmen
