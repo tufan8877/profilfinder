@@ -59,23 +59,23 @@ export default function Home() {
           <div className="container mx-auto max-w-5xl">
             <Card className="shadow-lg border-0">
               <CardContent className="p-6">
-                <form onSubmit={handleSearch} className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
-                  <div className="md:col-span-1 space-y-2">
+                <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-3 items-end">
+                  <div className="flex-1 min-w-0 space-y-1.5">
                     <label className="text-sm font-medium text-gray-700">Beruf/Tätigkeit</label>
-                    <div className="relative flex items-center">
-                      <Search className="absolute left-3 h-4 w-4 text-gray-400 pointer-events-none" />
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
                       <Input 
                         placeholder="z.B. Buchhalter" 
-                        className="pl-9"
+                        className="pl-9 h-10"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                       />
                     </div>
                   </div>
-                  <div className="md:col-span-1 space-y-2">
+                  <div className="flex-1 min-w-0 space-y-1.5">
                     <label className="text-sm font-medium text-gray-700">Branche</label>
                     <Select value={industry} onValueChange={setIndustry}>
-                      <SelectTrigger>
+                      <SelectTrigger className="h-10">
                         <SelectValue placeholder="Alle Branchen" />
                       </SelectTrigger>
                       <SelectContent>
@@ -86,10 +86,10 @@ export default function Home() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="md:col-span-1 space-y-2">
+                  <div className="flex-1 min-w-0 space-y-1.5">
                     <label className="text-sm font-medium text-gray-700">Bundesland</label>
                     <Select value={federalState} onValueChange={setFederalState}>
-                      <SelectTrigger>
+                      <SelectTrigger className="h-10">
                         <SelectValue placeholder="Ganz Österreich" />
                       </SelectTrigger>
                       <SelectContent>
@@ -100,10 +100,10 @@ export default function Home() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="md:col-span-1 space-y-2">
+                  <div className="flex-1 min-w-0 space-y-1.5">
                     <label className="text-sm font-medium text-gray-700">Verfügbarkeit</label>
                     <Select value={availability} onValueChange={setAvailability}>
-                      <SelectTrigger>
+                      <SelectTrigger className="h-10">
                         <SelectValue placeholder="Egal" />
                       </SelectTrigger>
                       <SelectContent>
@@ -114,8 +114,8 @@ export default function Home() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="md:col-span-1">
-                    <Button type="submit" className="w-full">Profile suchen</Button>
+                  <div className="shrink-0">
+                    <Button type="submit" className="h-10 px-6 whitespace-nowrap">Profile suchen</Button>
                   </div>
                 </form>
               </CardContent>
