@@ -3,20 +3,28 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: ProfilFinder.at API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: auth
+    description: Authentication
+  - name: profiles
+    description: Applicant profiles
+  - name: requests
+    description: Company contact requests
+  - name: admin
+    description: Admin operations
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,13 +32,997 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /register:
+    post:
+      operationId: register
+      tags: [auth]
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterInput"
+      responses:
+        "201":
+          description: Registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthUser"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: Logged in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthUser"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Logout
+      responses:
+        "200":
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /user:
+    get:
+      operationId: getUser
+      tags: [auth]
+      summary: Get current user
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthUser"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /change-email:
+    post:
+      operationId: changeEmail
+      tags: [auth]
+      summary: Change email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangeEmailInput"
+      responses:
+        "200":
+          description: Email changed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /change-password:
+    post:
+      operationId: changePassword
+      tags: [auth]
+      summary: Change password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangePasswordInput"
+      responses:
+        "200":
+          description: Password changed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /account:
+    delete:
+      operationId: deleteAccount
+      tags: [auth]
+      summary: Delete account
+      responses:
+        "200":
+          description: Account deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /profiles:
+    get:
+      operationId: getProfiles
+      tags: [profiles]
+      summary: Get public profiles with filters
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+        - in: query
+          name: industry
+          schema:
+            type: string
+        - in: query
+          name: federalState
+          schema:
+            type: string
+        - in: query
+          name: availability
+          schema:
+            type: string
+        - in: query
+          name: profession
+          schema:
+            type: string
+        - in: query
+          name: page
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of public profiles
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProfileListResponse"
+    post:
+      operationId: createProfile
+      tags: [profiles]
+      summary: Create a profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProfileInput"
+      responses:
+        "201":
+          description: Profile created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicProfile"
+
+  /profiles/{profileNumber}:
+    get:
+      operationId: getProfileByNumber
+      tags: [profiles]
+      summary: Get a public profile by profile number
+      parameters:
+        - in: path
+          name: profileNumber
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Public profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicProfile"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /profiles/{id}/update:
+    patch:
+      operationId: updateProfile
+      tags: [profiles]
+      summary: Update a profile
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProfileUpdate"
+      responses:
+        "200":
+          description: Profile updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicProfile"
+
+  /profiles/{id}/delete:
+    delete:
+      operationId: deleteProfile
+      tags: [profiles]
+      summary: Delete a profile
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /my-profile:
+    get:
+      operationId: getMyProfile
+      tags: [profiles]
+      summary: Get the current user's profile
+      responses:
+        "200":
+          description: My profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicProfile"
+        "404":
+          description: No profile yet
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /company-requests:
+    post:
+      operationId: createCompanyRequest
+      tags: [requests]
+      summary: Submit a company contact request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompanyRequestInput"
+      responses:
+        "201":
+          description: Request submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /admin/stats:
+    get:
+      operationId: getAdminStats
+      tags: [admin]
+      summary: Get platform statistics
+      responses:
+        "200":
+          description: Stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminStats"
+
+  /admin/profiles:
+    get:
+      operationId: getAdminProfiles
+      tags: [admin]
+      summary: Get all profiles (admin, with private data)
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+        - in: query
+          name: industry
+          schema:
+            type: string
+        - in: query
+          name: federalState
+          schema:
+            type: string
+        - in: query
+          name: availability
+          schema:
+            type: string
+        - in: query
+          name: page
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: All profiles with private data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminProfileListResponse"
+
+  /admin/profiles/{id}:
+    get:
+      operationId: getAdminProfile
+      tags: [admin]
+      summary: Get a single profile with full data (admin)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Full profile with private data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminProfile"
+    patch:
+      operationId: updateAdminProfile
+      tags: [admin]
+      summary: Update profile (admin)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminProfileUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminProfile"
+    delete:
+      operationId: deleteAdminProfile
+      tags: [admin]
+      summary: Delete profile (admin)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /admin/company-requests:
+    get:
+      operationId: getAdminCompanyRequests
+      tags: [admin]
+      summary: Get all company requests (admin)
+      responses:
+        "200":
+          description: All requests
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CompanyRequest"
+
+  /admin/company-requests/{id}/status:
+    patch:
+      operationId: updateCompanyRequestStatus
+      tags: [admin]
+      summary: Update company request status
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestStatusUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompanyRequest"
+
+  /admin/users:
+    get:
+      operationId: getAdminUsers
+      tags: [admin]
+      summary: Get all users (admin)
+      responses:
+        "200":
+          description: All users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AdminUser"
+
+  /admin/users/{id}/status:
+    patch:
+      operationId: updateUserStatus
+      tags: [admin]
+      summary: Update user status (admin)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserStatusUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminUser"
+
+  /featured-profiles:
+    get:
+      operationId: getFeaturedProfiles
+      tags: [profiles]
+      summary: Get a small set of featured/recent profiles for the homepage
+      responses:
+        "200":
+          description: Featured profiles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PublicProfile"
+
+  /industry-stats:
+    get:
+      operationId: getIndustryStats
+      tags: [profiles]
+      summary: Get profile counts grouped by industry
+      responses:
+        "200":
+          description: Industry stats
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/IndustryStat"
+
 components:
   schemas:
     HealthStatus:
       type: object
+      required: [status]
       properties:
         status:
           type: string
-      required:
-        - status
 
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+
+    MessageResponse:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+
+    RegisterInput:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+
+    LoginInput:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+
+    AuthUser:
+      type: object
+      required: [id, email, isAdmin, status, createdAt]
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        isAdmin:
+          type: boolean
+        status:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    ChangeEmailInput:
+      type: object
+      required: [newEmail, password]
+      properties:
+        newEmail:
+          type: string
+          format: email
+        password:
+          type: string
+
+    ChangePasswordInput:
+      type: object
+      required: [currentPassword, newPassword]
+      properties:
+        currentPassword:
+          type: string
+        newPassword:
+          type: string
+          minLength: 8
+
+    PublicProfile:
+      type: object
+      required: [id, profileNumber, jobTitle, industry, federalState, availability, isAvailable, createdAt]
+      properties:
+        id:
+          type: integer
+        profileNumber:
+          type: string
+        publicName:
+          type: ["string", "null"]
+        jobTitle:
+          type: string
+        profession:
+          type: ["string", "null"]
+        industry:
+          type: string
+        experience:
+          type: ["string", "null"]
+        education:
+          type: ["string", "null"]
+        skills:
+          type: ["string", "null"]
+        languages:
+          type: ["string", "null"]
+        desiredJob:
+          type: ["string", "null"]
+        federalState:
+          type: string
+        city:
+          type: ["string", "null"]
+        availability:
+          type: string
+        employmentType:
+          type: ["string", "null"]
+        driverLicense:
+          type: boolean
+        description:
+          type: ["string", "null"]
+        cvText:
+          type: ["string", "null"]
+        profileImage:
+          type: ["string", "null"]
+        isAvailable:
+          type: boolean
+        isPublic:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: ["string", "null"]
+          format: date-time
+
+    ProfileListResponse:
+      type: object
+      required: [profiles, total, page, limit]
+      properties:
+        profiles:
+          type: array
+          items:
+            $ref: "#/components/schemas/PublicProfile"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+
+    ProfileInput:
+      type: object
+      required: [jobTitle, industry, federalState, availability, description]
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        publicName:
+          type: string
+        jobTitle:
+          type: string
+        profession:
+          type: string
+        industry:
+          type: string
+        experience:
+          type: string
+        education:
+          type: string
+        skills:
+          type: string
+        languages:
+          type: string
+        desiredJob:
+          type: string
+        federalState:
+          type: string
+        city:
+          type: string
+        availability:
+          type: string
+        employmentType:
+          type: string
+        driverLicense:
+          type: boolean
+        description:
+          type: string
+        cvText:
+          type: string
+        profileImage:
+          type: string
+        isAvailable:
+          type: boolean
+        isPublic:
+          type: boolean
+        phoneNumber:
+          type: string
+        contactEmail:
+          type: string
+        address:
+          type: string
+
+    ProfileUpdate:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        publicName:
+          type: string
+        jobTitle:
+          type: string
+        profession:
+          type: string
+        industry:
+          type: string
+        experience:
+          type: string
+        education:
+          type: string
+        skills:
+          type: string
+        languages:
+          type: string
+        desiredJob:
+          type: string
+        federalState:
+          type: string
+        city:
+          type: string
+        availability:
+          type: string
+        employmentType:
+          type: string
+        driverLicense:
+          type: boolean
+        description:
+          type: string
+        cvText:
+          type: string
+        profileImage:
+          type: string
+        isAvailable:
+          type: boolean
+        isPublic:
+          type: boolean
+        phoneNumber:
+          type: string
+        contactEmail:
+          type: string
+        address:
+          type: string
+
+    AdminProfile:
+      type: object
+      required: [id, profileNumber, jobTitle, industry, federalState, availability, isAvailable, createdAt]
+      properties:
+        id:
+          type: integer
+        profileNumber:
+          type: string
+        userId:
+          type: integer
+        firstName:
+          type: ["string", "null"]
+        lastName:
+          type: ["string", "null"]
+        publicName:
+          type: ["string", "null"]
+        jobTitle:
+          type: string
+        profession:
+          type: ["string", "null"]
+        industry:
+          type: string
+        experience:
+          type: ["string", "null"]
+        education:
+          type: ["string", "null"]
+        skills:
+          type: ["string", "null"]
+        languages:
+          type: ["string", "null"]
+        desiredJob:
+          type: ["string", "null"]
+        federalState:
+          type: string
+        city:
+          type: ["string", "null"]
+        availability:
+          type: string
+        employmentType:
+          type: ["string", "null"]
+        driverLicense:
+          type: boolean
+        description:
+          type: ["string", "null"]
+        cvText:
+          type: ["string", "null"]
+        profileImage:
+          type: ["string", "null"]
+        isAvailable:
+          type: boolean
+        isPublic:
+          type: boolean
+        phoneNumber:
+          type: ["string", "null"]
+        contactEmail:
+          type: ["string", "null"]
+        address:
+          type: ["string", "null"]
+        adminNotes:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: ["string", "null"]
+          format: date-time
+
+    AdminProfileListResponse:
+      type: object
+      required: [profiles, total, page, limit]
+      properties:
+        profiles:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdminProfile"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+
+    AdminProfileUpdate:
+      type: object
+      properties:
+        jobTitle:
+          type: string
+        profession:
+          type: string
+        industry:
+          type: string
+        experience:
+          type: string
+        education:
+          type: string
+        skills:
+          type: string
+        languages:
+          type: string
+        desiredJob:
+          type: string
+        federalState:
+          type: string
+        city:
+          type: string
+        availability:
+          type: string
+        employmentType:
+          type: string
+        driverLicense:
+          type: boolean
+        description:
+          type: string
+        cvText:
+          type: string
+        isAvailable:
+          type: boolean
+        isPublic:
+          type: boolean
+        adminNotes:
+          type: string
+
+    CompanyRequestInput:
+      type: object
+      required: [profileNumber, companyName, contactPerson, email, message]
+      properties:
+        profileNumber:
+          type: string
+        companyName:
+          type: string
+        contactPerson:
+          type: string
+        email:
+          type: string
+          format: email
+        phoneNumber:
+          type: string
+        message:
+          type: string
+
+    CompanyRequest:
+      type: object
+      required: [id, profileNumber, companyName, contactPerson, email, message, status, createdAt]
+      properties:
+        id:
+          type: integer
+        profileId:
+          type: ["integer", "null"]
+        profileNumber:
+          type: string
+        companyName:
+          type: string
+        contactPerson:
+          type: string
+        email:
+          type: string
+        phoneNumber:
+          type: ["string", "null"]
+        message:
+          type: string
+        status:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: ["string", "null"]
+          format: date-time
+
+    RequestStatusUpdate:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+
+    AdminStats:
+      type: object
+      required: [totalProfiles, activeProfiles, totalRequests, newRequests, totalUsers]
+      properties:
+        totalProfiles:
+          type: integer
+        activeProfiles:
+          type: integer
+        totalRequests:
+          type: integer
+        newRequests:
+          type: integer
+        totalUsers:
+          type: integer
+
+    AdminUser:
+      type: object
+      required: [id, email, isAdmin, status, createdAt]
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        isAdmin:
+          type: boolean
+        status:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    UserStatusUpdate:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+
+    IndustryStat:
+      type: object
+      required: [industry, count]
+      properties:
+        industry:
+          type: string
+        count:
+          type: integer

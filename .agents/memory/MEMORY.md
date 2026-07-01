@@ -1,0 +1,3 @@
+- [Express 5 params typing](express5-params.md) — req.params.id is `string | string[]` in Express 5; always use parseInt(String(req.params.id))
+- [Orval array endpoints](orval-array-endpoints.md) — endpoints returning arrays give hooks data typed as T[] directly; accessing .profiles on array response causes "Cannot read map of undefined"
+- [Session auth pattern](session-auth.md) — express-session + connect-pg-simple with credentials:true CORS; admin auto-promoted via ADMIN_EMAIL/ADMIN_PASSWORD env

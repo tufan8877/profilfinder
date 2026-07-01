@@ -1,0 +1,556 @@
+Erstelle mir eine professionelle Fullstack-Webseite namens **ProfilFinder.at**.
+
+Die Webseite soll im gleichen modernen Stil aufgebaut sein wie mein bestehendes GitHub-Projekt:
+
+**GitHub-Referenz:** `tufan8877/speedjobsat`
+
+Bitte orientiere dich optisch und technisch stark an diesem Projekt:
+
+* React + Vite + TypeScript
+* Express Backend
+* Tailwind CSS
+* Wouter Routing
+* Drizzle ORM / PostgreSQL oder Replit-kompatible Datenbank
+* Moderne helle Oberfläche
+* Weißer Hintergrund
+* Blaue Hauptfarbe
+* Roter Akzent für `.at`
+* Sticky Header
+* Saubere Cards mit Schatten
+* Mobile responsive Design
+* Seriöser österreichischer Plattform-Look
+* Keine überladene One-Page, sondern mehrere klare Seiten
+
+Die neue Plattform heißt:
+
+**ProfilFinder.at**
+
+Logo/Text im Header:
+**ProfilFinder.at**
+„ProfilFinder“ in Blau, „.at“ in Rot.
+
+Die Plattform-Idee:
+
+ProfilFinder.at ist eine Bewerberprofil-Plattform für Unternehmen in Österreich. Personen können ein eigenes Bewerberprofil erstellen, ähnlich wie ein Lebenslauf. Unternehmen können diese Profile ansehen und bei Interesse über die jeweilige Profilnummer eine Anfrage stellen. Die privaten Kontaktdaten der Bewerber dürfen öffentlich nicht sichtbar sein. Nur der Admin darf die vollständigen Kontaktdaten sehen.
+
+Wichtiges Datenschutz-Prinzip:
+Normale Besucher und Unternehmen sehen nur berufliche Informationen, aber keine Telefonnummer, keine private E-Mail und keine genaue Adresse. Die Kontaktdaten sind nur im Admin-Dashboard sichtbar.
+
+Jedes Bewerberprofil bekommt automatisch eine eindeutige Profilnummer, z. B.:
+
+PF-000001
+PF-000002
+PF-000003
+
+Diese Profilnummer muss öffentlich sichtbar sein, damit Unternehmen eine Anfrage stellen können.
+
+Die Webseite soll folgende Seiten haben:
+
+1. **Startseite**
+2. **Profile durchsuchen**
+3. **Profil erstellen**
+4. **So funktioniert es**
+5. **Für Unternehmen**
+6. **Kontakt**
+7. **Login / Registrierung**
+8. **Mein Profil**
+9. **Admin Dashboard**
+10. **Datenschutz**
+11. **Impressum**
+12. **FAQ**
+
+Startseite:
+
+Hero-Bereich mit großer Überschrift:
+
+**Bewerberprofile finden. Kontakte sicher anfragen.**
+
+Untertitel:
+
+**ProfilFinder.at verbindet Unternehmen mit Bewerbern aus Handwerk, Gastronomie, IT, Büro, Verkauf, Lager und weiteren Branchen. Kontaktdaten bleiben geschützt und werden nur über Profilnummer angefragt.**
+
+Buttons:
+
+* **Profile ansehen**
+* **Profil erstellen**
+* **Für Unternehmen**
+
+Darunter eine Suchbox mit:
+
+* Beruf / Tätigkeit
+* Branche
+* Bundesland
+* Verfügbarkeit
+* Button „Profile suchen“
+
+Die Startseite soll zusätzlich folgende Bereiche haben:
+
+* Beliebte Branchen
+* Aktuelle Bewerberprofile
+* So funktioniert ProfilFinder.at
+* Vorteile für Bewerber
+* Vorteile für Unternehmen
+* Kontakt-Anfrage für Unternehmen
+
+Branchen und Berufe:
+
+Die Plattform soll viele Branchen abdecken, besonders:
+
+**Handwerk & Technik**
+
+* Installateur
+* Gas- und Wasserinstallateur
+* Heizungsinstallateur
+* Elektriker
+* Elektrotechniker
+* Klimatechniker
+* Lüftungstechniker
+* Kältetechniker
+* Servicetechniker
+* Haustechniker
+* Gebäudetechniker
+* Schlosser
+* Metalltechniker
+* Spengler
+* Dachdecker
+* Tischler
+* Maler
+* Lackierer
+* Fliesenleger
+* Bodenleger
+* Maurer
+* Trockenbauer
+* Bauhelfer
+* Allround-Handwerker
+* Reinigungstechniker
+
+**Gastronomie & Hotellerie**
+
+* Kellner
+* Servicekraft
+* Koch
+* Küchenhilfe
+* Abwäscher
+* Barista
+* Barkeeper
+* Pizzakoch
+* Grillkoch
+* Sous-Chef
+* Küchenchef
+* Frühstückskraft
+* Buffetkraft
+* Rezeptionist
+* Hotelmitarbeiter
+* Housekeeping
+* Zimmermädchen
+* Eventpersonal
+* Lieferfahrer
+
+**IT & EDV**
+
+* IT-Techniker
+* EDV-Techniker
+* Netzwerktechniker
+* Systemadministrator
+* IT-Support
+* Helpdesk-Mitarbeiter
+* Webentwickler
+* Softwareentwickler
+* App-Entwickler
+* Datenbank-Mitarbeiter
+* Cybersecurity-Mitarbeiter
+* PC-Techniker
+
+**Büro & Verwaltung**
+
+* Büroangestellter
+* Sachbearbeiter
+* Assistent
+* Sekretariat
+* Backoffice-Mitarbeiter
+* Kundenservice-Mitarbeiter
+* Callcenter-Mitarbeiter
+* Empfangsmitarbeiter
+* Datenerfassung
+* Buchhaltungsassistenz
+
+**Verkauf & Service**
+
+* Verkäufer
+* Kassierer
+* Filialmitarbeiter
+* Regalbetreuer
+* Kundenberater
+* Außendienstmitarbeiter
+* Verkaufsberater
+* Promoter
+
+**Lager, Logistik & Produktion**
+
+* Lagerarbeiter
+* Kommissionierer
+* Staplerfahrer
+* Lieferfahrer
+* Paketfahrer
+* Umzugshelfer
+* Produktionsmitarbeiter
+* Maschinenbediener
+* Verpackungsmitarbeiter
+* Warenübernehmer
+* Logistikmitarbeiter
+
+**Bau & Hilfsarbeiten**
+
+* Bauarbeiter
+* Bauhelfer
+* Eisenbieger
+* Schalungsbauer
+* Betonbauer
+* Gerüstbauer
+* Sanierungsarbeiter
+* Abrissarbeiter
+
+Profil-Erstellung für Bewerber:
+
+Ein registrierter Benutzer kann ein Bewerberprofil erstellen mit folgenden Feldern:
+
+Öffentlich sichtbar:
+
+* Profilnummer automatisch generiert
+* Vorname
+* Nachname optional nur Anfangsbuchstabe öffentlich anzeigen
+* Berufsbezeichnung
+* Branche
+* Berufserfahrung
+* Ausbildung
+* Fähigkeiten
+* Sprachen
+* Gewünschte Tätigkeit
+* Gewünschter Arbeitsort / Bundesland
+* Verfügbarkeit
+* Vollzeit / Teilzeit / Geringfügig / Schichtarbeit / Wochenende
+* Führerschein ja/nein
+* Kurze Beschreibung über sich
+* Profilbild optional
+* Lebenslauf als Textfeld
+* Status: verfügbar / nicht verfügbar
+
+Nicht öffentlich sichtbar, nur Admin:
+
+* Telefonnummer
+* E-Mail-Adresse
+* Adresse
+* vollständiger Name
+* interne Notizen
+
+Profilkarten:
+
+Auf der Suchseite sollen Profile als moderne Cards angezeigt werden.
+
+Jede Card soll zeigen:
+
+* Profilnummer, z. B. PF-000014
+* Name gekürzt, z. B. „Mehmet K.“
+* Beruf, z. B. „Installateur“
+* Branche
+* Bundesland / Region
+* Erfahrung
+* Verfügbarkeit
+* kurze Beschreibung
+* Button „Profil ansehen“
+* Button „Kontakt anfragen“
+
+Wichtig:
+Telefonnummer und E-Mail dürfen auf der öffentlichen Profilkarte und öffentlichen Profilseite nicht sichtbar sein.
+
+Profil-Detailseite:
+
+Die Detailseite soll mehr Informationen anzeigen:
+
+* Profilnummer
+* Beruf
+* Branche
+* Erfahrung
+* Ausbildung
+* Fähigkeiten
+* Sprachen
+* Arbeitsort
+* Verfügbarkeit
+* Beschreibung
+* Lebenslauf-ähnliche Informationen
+* Button „Kontakt zu diesem Profil anfragen“
+
+Kontakt-Anfrage durch Unternehmen:
+
+Wenn ein Unternehmen auf „Kontakt anfragen“ klickt, öffnet sich ein Formular.
+
+Formularfelder:
+
+* Profilnummer automatisch vorausgefüllt
+* Firmenname
+* Ansprechpartner
+* E-Mail
+* Telefonnummer
+* Nachricht
+* Checkbox: „Ich bestätige, dass ich Interesse an diesem Bewerberprofil habe.“
+
+Nach dem Absenden soll die Anfrage gespeichert werden und zusätzlich für den Admin sichtbar sein.
+
+Optional soll eine E-Mail an den Admin vorbereitet werden mit:
+Betreff: Neue Profil-Anfrage für PF-000001
+
+Inhalt:
+Firma, Ansprechpartner, E-Mail, Telefonnummer, Profilnummer und Nachricht.
+
+Admin Dashboard:
+
+Erstelle ein geschütztes Admin Dashboard unter `/admin`.
+
+Nur Admin darf Zugriff haben.
+
+Admin Login über ENV:
+
+* ADMIN_EMAIL
+* ADMIN_PASSWORD
+* SESSION_SECRET
+
+Im Admin Dashboard braucht es:
+
+1. Übersicht
+
+* Anzahl Profile
+* Anzahl aktive Profile
+* Anzahl Anfragen
+* Neue Anfragen
+* Anzahl registrierte Benutzer
+
+2. Profilverwaltung
+
+* Alle Profile anzeigen
+* Suche nach Profilnummer
+* Suche nach Name
+* Suche nach Beruf
+* Suche nach Branche
+* Filter nach Bundesland
+* Filter nach Verfügbarkeit
+* Profil öffnen
+* Profil bearbeiten
+* Profil löschen
+* Profil deaktivieren / aktivieren
+
+3. Kontaktinformationen nur für Admin
+   Wenn Admin ein Profil öffnet, sieht er:
+
+* vollständiger Name
+* Telefonnummer
+* E-Mail-Adresse
+* Adresse
+* interne Notizen
+* vollständige Profildaten
+
+4. Anfrageverwaltung
+
+* Alle Firmenanfragen anzeigen
+* Profilnummer anzeigen
+* Firmenname
+* Ansprechpartner
+* E-Mail
+* Telefonnummer
+* Nachricht
+* Status: neu / bearbeitet / erledigt
+* Button „als bearbeitet markieren“
+* Button „als erledigt markieren“
+
+5. Admin-Suche
+   Oben im Admin Dashboard soll eine Suchleiste sein:
+   „Profilnummer oder Name eingeben“
+
+Wenn der Admin z. B. PF-000014 oder einen Namen eingibt, soll sofort das passende Profil erscheinen. Nur hier dürfen Kontaktdaten sichtbar sein.
+
+Benutzerfunktionen:
+
+Registrierte Bewerber sollen:
+
+* Konto erstellen
+* Login
+* Logout
+* eigenes Profil erstellen
+* eigenes Profil bearbeiten
+* eigenes Profil deaktivieren
+* E-Mail ändern
+* Passwort ändern
+* Account löschen
+
+Kein Google Login. Nur E-Mail und Passwort.
+
+Design-Anforderungen:
+
+Bitte orientiere dich stark an `tufan8877/speedjobsat`:
+
+* Header oben weiß mit Schatten
+* Logo links
+* Navigation rechts
+* Buttons in Blau
+* Akzentfarbe Rot
+* Cards mit weißem Hintergrund
+* Hellgraue Sektionen
+* Runde Ecken
+* Saubere Abstände
+* Mobile-Menü mit Hamburger
+* Professioneller österreichischer Plattform-Stil
+* Schrift ähnlich Inter / Montserrat
+* Nicht verspielt, sondern seriös und vertrauenswürdig
+
+Header Navigation:
+
+* Startseite
+* Profile
+* Profil erstellen
+* Für Unternehmen
+* So funktioniert es
+* Kontakt
+* Anmelden / Registrieren
+* Admin nur sichtbar, wenn Admin eingeloggt ist
+
+Footer:
+
+* ProfilFinder.at
+* Kurzbeschreibung
+* Kontakt
+* Datenschutz
+* Impressum
+* FAQ
+* Nutzungsbedingungen
+
+Datenbank-Modelle:
+
+Erstelle Tabellen für:
+
+users:
+
+* id
+* email
+* password
+* isAdmin
+* status
+* createdAt
+
+profiles:
+
+* id
+* profileNumber
+* userId
+* firstName
+* lastName
+* publicName
+* jobTitle
+* industry
+* profession
+* experience
+* education
+* skills
+* languages
+* desiredJob
+* federalState
+* city
+* availability
+* employmentType
+* driverLicense
+* description
+* cvText
+* profileImage
+* isAvailable
+* isPublic
+* phoneNumber
+* contactEmail
+* address
+* adminNotes
+* createdAt
+* updatedAt
+
+companyRequests:
+
+* id
+* profileId
+* profileNumber
+* companyName
+* contactPerson
+* email
+* phoneNumber
+* message
+* status
+* createdAt
+* updatedAt
+
+API-Routen:
+
+Auth:
+
+* POST `/api/register`
+* POST `/api/login`
+* POST `/api/logout`
+* GET `/api/user`
+* POST `/api/change-email`
+* POST `/api/change-password`
+* DELETE `/api/account`
+
+Profile:
+
+* GET `/api/profiles`
+* GET `/api/profiles/:profileNumber`
+* POST `/api/profiles`
+* PATCH `/api/profiles/:id`
+* DELETE `/api/profiles/:id`
+* GET `/api/my-profile`
+
+Company Requests:
+
+* POST `/api/company-requests`
+* GET `/api/admin/company-requests`
+* PATCH `/api/admin/company-requests/:id/status`
+
+Admin:
+
+* GET `/api/admin/stats`
+* GET `/api/admin/profiles`
+* GET `/api/admin/profiles/search?q=`
+* GET `/api/admin/profiles/:id`
+* PATCH `/api/admin/profiles/:id`
+* DELETE `/api/admin/profiles/:id`
+* GET `/api/admin/users`
+* PATCH `/api/admin/users/:id/status`
+
+Wichtig:
+Öffentliche API-Routen dürfen keine privaten Kontaktdaten zurückgeben. Öffentliche Profile sollen Telefonnummer, E-Mail, Adresse und Admin-Notizen niemals ausgeben. Nur Admin-Routen dürfen diese Daten liefern.
+
+Validierung:
+
+* E-Mail muss gültig sein
+* Passwort mindestens 8 Zeichen
+* Profilnummer muss eindeutig sein
+* Profil muss mindestens Beruf, Branche, Bundesland, Beschreibung und Verfügbarkeit haben
+* Firmenanfrage muss Firmenname, E-Mail und Profilnummer enthalten
+
+Beispieltexte auf der Webseite:
+
+Startseite Titel:
+**Bewerberprofile finden. Kontakte sicher anfragen.**
+
+Untertitel:
+**Unternehmen finden passende Bewerberprofile aus Handwerk, Gastronomie, IT, Büro, Verkauf, Lager und weiteren Branchen. Kontaktdaten bleiben geschützt und werden nur über die Profilnummer angefragt.**
+
+Für Bewerber:
+**Erstellen Sie Ihr Profil, zeigen Sie Ihre Erfahrung und erhöhen Sie Ihre Chancen auf neue Jobangebote.**
+
+Für Unternehmen:
+**Durchsuchen Sie Bewerberprofile, merken Sie sich interessante Profilnummern und senden Sie eine Kontaktanfrage an ProfilFinder.at.**
+
+So funktioniert es:
+
+1. Bewerber erstellt ein Profil
+2. Profil erhält automatisch eine Profilnummer
+3. Unternehmen findet ein passendes Profil
+4. Unternehmen fragt Kontakt über Profilnummer an
+5. Admin prüft die Anfrage und vermittelt die Kontaktdaten
+
+Bitte erstelle die komplette Webseite funktionsfähig, modern, responsive und im Stil von meinem bestehenden Projekt `tufan8877/speedjobsat`. Die Plattform soll seriös, vertrauenswürdig und professionell wirken.
