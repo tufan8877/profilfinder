@@ -62,8 +62,8 @@ export default function Home() {
                 <form onSubmit={handleSearch} className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
                   <div className="md:col-span-1 space-y-2">
                     <label className="text-sm font-medium text-gray-700">Beruf/Tätigkeit</label>
-                    <div className="relative">
-                      <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <div className="relative flex items-center">
+                      <Search className="absolute left-3 h-4 w-4 text-gray-400 pointer-events-none" />
                       <Input 
                         placeholder="z.B. Buchhalter" 
                         className="pl-9"
