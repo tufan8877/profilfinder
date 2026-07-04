@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: profilfinder
+    runtime: node
+    plan: free
+    branch: main
+    buildCommand: corepack enable && pnpm install --no-frozen-lockfile && pnpm run build
+    startCommand: pnpm start
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: DATABASE_URL
+        sync: false
