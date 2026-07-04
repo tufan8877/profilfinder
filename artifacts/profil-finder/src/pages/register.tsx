@@ -45,8 +45,8 @@ export default function Register() {
         return;
       }
 
-      toast.success("Erfolgreich registriert.");
-      setLocation("/my-profile");
+      toast.success(result?.message || "Konto wurde erstellt. Bitte anmelden.");
+      setLocation("/login");
     } catch (error) {
       const message = error instanceof Error ? error.message : "Registrierung fehlgeschlagen.";
       setServerError(message);
