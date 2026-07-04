@@ -7,7 +7,12 @@ import { useState } from "react";
 export function Navbar() {
   const [location] = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { data: user, isLoading } = useGetUser();
+  const { data: user } = useGetUser({
+    query: {
+      retry: false,
+      staleTime: 30000,
+    },
+  });
   const logout = useLogout();
 
   const handleLogout = () => {
@@ -34,7 +39,6 @@ export function Navbar() {
           <span className="text-xl font-bold text-red-600 tracking-tight">.at</span>
         </Link>
 
-        {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-700">
           {navLinks.map((link) => (
             <Link 
@@ -53,29 +57,26 @@ export function Navbar() {
         </nav>
 
         <div className="hidden md:flex items-center gap-4">
-          {!isLoading && (
-            user ? (
-              <div className="flex items-center gap-4">
-                <Link href="/my-profile" className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-primary">
-                  <UserIcon className="w-4 h-4" />
-                  Mein Profil
-                </Link>
-                <Button variant="outline" size="sm" onClick={handleLogout}>Abmelden</Button>
-              </div>
-            ) : (
-              <>
-                <Link href="/login" className="text-sm font-medium text-gray-700 hover:text-primary">
-                  Anmelden
-                </Link>
-                <Link href="/register">
-                  <Button size="sm">Registrieren</Button>
-                </Link>
-              </>
-            )
+          {user ? (
+            <div className="flex items-center gap-4">
+              <Link href="/my-profile" className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-primary">
+                <UserIcon className="w-4 h-4" />
+                Mein Profil
+              </Link>
+              <Button variant="outline" size="sm" onClick={handleLogout}>Abmelden</Button>
+            </div>
+          ) : (
+            <>
+              <Link href="/login" className="text-sm font-medium text-gray-700 hover:text-primary">
+                Anmelden
+              </Link>
+              <Link href="/register">
+                <Button size="sm">Registrieren</Button>
+              </Link>
+            </>
           )}
         </div>
 
-        {/* Mobile Menu Toggle */}
         <button 
           className="md:hidden p-2 text-gray-600"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -84,7 +85,6 @@ export function Navbar() {
         </button>
       </div>
 
-      {/* Mobile Navigation */}
       {isMobileMenuOpen && (
         <div className="md:hidden border-t border-gray-100 bg-white">
           <nav className="flex flex-col py-4 px-4 space-y-4">
@@ -109,30 +109,28 @@ export function Navbar() {
             )}
             
             <div className="pt-4 border-t border-gray-100 flex flex-col gap-3">
-              {!isLoading && (
-                user ? (
-                  <>
-                    <Link 
-                      href="/my-profile" 
-                      className="text-base font-medium text-gray-700"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Mein Profil
-                    </Link>
-                    <Button variant="outline" className="w-full justify-center" onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}>
-                      Abmelden
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                      <Button variant="outline" className="w-full justify-center">Anmelden</Button>
-                    </Link>
-                    <Link href="/register" onClick={() => setIsMobileMenuOpen(false)}>
-                      <Button className="w-full justify-center">Registrieren</Button>
-                    </Link>
-                  </>
-                )
+              {user ? (
+                <>
+                  <Link 
+                    href="/my-profile" 
+                    className="text-base font-medium text-gray-700"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Mein Profil
+                  </Link>
+                  <Button variant="outline" className="w-full justify-center" onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}>
+                    Abmelden
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Button variant="outline" className="w-full justify-center">Anmelden</Button>
+                  </Link>
+                  <Link href="/register" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Button className="w-full justify-center">Registrieren</Button>
+                  </Link>
+                </>
               )}
             </div>
           </nav>
