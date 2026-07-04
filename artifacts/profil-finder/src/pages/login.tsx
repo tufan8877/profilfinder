@@ -6,9 +6,9 @@ import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useLogin } from "@workspace/api-client-react";
 import { toast } from "sonner";
 import { Link, useLocation } from "wouter";
+import { useState } from "react";
 
 const schema = z.object({
   email: z.string().email("Bitte geben Sie eine gültige E-Mail-Adresse ein"),
@@ -17,22 +17,43 @@ const schema = z.object({
 
 export default function Login() {
   const [, setLocation] = useLocation();
-  const login = useLogin();
-  
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [serverError, setServerError] = useState("");
+
   const { register, handleSubmit, formState: { errors } } = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
   });
 
-  const onSubmit = (data: z.infer<typeof schema>) => {
-    login.mutate({ data }, {
-      onSuccess: () => {
-        toast.success("Erfolgreich angemeldet");
-        setLocation("/my-profile");
-      },
-      onError: () => {
-        toast.error("Anmeldung fehlgeschlagen. Bitte überprüfen Sie Ihre Zugangsdaten.");
+  const onSubmit = async (data: z.infer<typeof schema>) => {
+    setIsSubmitting(true);
+    setServerError("");
+
+    try {
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        const message = result?.error || result?.message || `Anmeldung fehlgeschlagen. Fehler ${response.status}`;
+        setServerError(message);
+        toast.error(message);
+        return;
       }
-    });
+
+      toast.success("Erfolgreich angemeldet");
+      setLocation("/my-profile");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Anmeldung fehlgeschlagen.";
+      setServerError(message);
+      toast.error(message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -44,18 +65,19 @@ export default function Login() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              {serverError && <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">{serverError}</div>}
               <div className="space-y-2">
                 <Label htmlFor="email">E-Mail</Label>
-                <Input id="email" type="email" {...register("email")} />
+                <Input id="email" type="email" autoComplete="email" {...register("email")} />
                 {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="password">Passwort</Label>
-                <Input id="password" type="password" {...register("password")} />
+                <Input id="password" type="password" autoComplete="current-password" {...register("password")} />
                 {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
               </div>
-              <Button type="submit" className="w-full" disabled={login.isPending}>
-                Anmelden
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
+                {isSubmitting ? "Wird angemeldet..." : "Anmelden"}
               </Button>
               <div className="text-center text-sm mt-4">
                 Noch kein Konto? <Link href="/register" className="text-primary hover:underline">Hier registrieren</Link>
