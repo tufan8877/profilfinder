@@ -3,7 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { build as esbuild } from "esbuild";
 import esbuildPluginPino from "esbuild-plugin-pino";
-import { rm } from "node:fs/promises";
+import { copyFile, rm } from "node:fs/promises";
 
 globalThis.require = createRequire(import.meta.url);
 
@@ -18,7 +18,8 @@ async function buildAll() {
     platform: "node",
     bundle: true,
     format: "esm",
-    outfile: path.resolve(distDir, "index.mjs"),
+    outdir: distDir,
+    outExtension: { ".js": ".mjs" },
     logLevel: "info",
     external: ["*.node", "sharp", "better-sqlite3", "sqlite3", "canvas", "bcrypt", "argon2", "fsevents", "pg-native"],
     sourcemap: "linked",
@@ -34,6 +35,11 @@ globalThis.__dirname = __bannerPath.dirname(globalThis.__filename);
     `,
     },
   });
+
+  await copyFile(
+    path.resolve(distDir, "index-memory.mjs"),
+    path.resolve(distDir, "index.mjs"),
+  );
 }
 
 buildAll().catch((err) => {
