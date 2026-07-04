@@ -3,6 +3,8 @@ import cors from "cors";
 import pinoHttp from "pino-http";
 import session from "express-session";
 import connectPgSimple from "connect-pg-simple";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { pool } from "@workspace/db";
 import router from "./routes";
 import { logger } from "./lib/logger";
@@ -15,8 +17,10 @@ declare module "express-session" {
 }
 
 const app: Express = express();
-
 const PgStore = connectPgSimple(session);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const staticDir = path.resolve(__dirname, "..", "..", "profil-finder", "dist", "public");
 
 app.use(
   pinoHttp({
@@ -45,21 +49,27 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.set("trust proxy", 1);
+
 app.use(
   session({
-    store: new PgStore({ pool }),
+    store: new PgStore({ pool, createTableIfMissing: true }),
     secret: process.env.SESSION_SECRET || "profil-finder-secret-key",
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: false,
+      secure: process.env.NODE_ENV === "production",
       httpOnly: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      maxAge: 7 * 24 * 60 * 60 * 1000,
       sameSite: "lax",
     },
   }),
 );
 
 app.use("/api", router);
+app.use(express.static(staticDir));
+app.get(/^(?!\/api).*/, (_req, res) => {
+  res.sendFile(path.join(staticDir, "index.html"));
+});
 
 export default app;
