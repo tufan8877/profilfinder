@@ -37,9 +37,15 @@ router.post("/register", async (req, res) => {
 
     const hashed = await bcrypt.hash(password, 12);
     const [user] = await db.insert(usersTable).values({ email: userEmail, password: hashed }).returning();
-    req.session.userId = user.id;
-    req.session.isAdmin = user.isAdmin;
-    saveSession(req, res, { id: user.id, email: user.email, isAdmin: user.isAdmin, status: user.status, createdAt: user.createdAt }, 201);
+
+    res.status(201).json({
+      message: "Konto wurde erstellt. Bitte melden Sie sich an.",
+      id: user.id,
+      email: user.email,
+      isAdmin: user.isAdmin,
+      status: user.status,
+      createdAt: user.createdAt,
+    });
   } catch {
     res.status(500).json({ error: "Registrierung fehlgeschlagen. Bitte DATABASE_URL und Datenbanktabellen prüfen." });
   }
