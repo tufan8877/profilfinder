@@ -64,21 +64,21 @@ export async function ensureDatabaseTables() {
     );
   `);
 
-  await pool.query(`
-    DROP TABLE IF EXISTS "session";
-  `);
+  await pool.query(`DROP TABLE IF EXISTS "session" CASCADE;`);
+  await pool.query(`DROP INDEX IF EXISTS "session_pkey";`);
+  await pool.query(`DROP INDEX IF EXISTS "IDX_session_expire";`);
 
   await pool.query(`
     CREATE TABLE "session" (
-      "sid" varchar NOT NULL COLLATE "default",
+      "sid" varchar NOT NULL,
       "sess" json NOT NULL,
       "expire" timestamp(6) NOT NULL,
-      CONSTRAINT "session_pkey" PRIMARY KEY ("sid")
+      PRIMARY KEY ("sid")
     );
   `);
 
   await pool.query(`
-    CREATE INDEX IF NOT EXISTS "IDX_session_expire" ON "session" ("expire");
+    CREATE INDEX "IDX_session_expire" ON "session" ("expire");
   `);
 
   logger.info("Database tables are ready");
