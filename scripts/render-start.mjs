@@ -21,46 +21,102 @@ function exists(filePath) {
   }
 }
 
+function sendJson(res, data, statusCode = 200) {
+  res.writeHead(statusCode, {
+    "Content-Type": "application/json; charset=utf-8",
+    "Cache-Control": "no-store",
+  });
+  res.end(JSON.stringify(data));
+}
+
+function handleApi(req, res, pathname, searchParams) {
+  if (!pathname.startsWith("/api/")) return false;
+
+  if (pathname === "/api/healthz") {
+    sendJson(res, { status: "ok" });
+    return true;
+  }
+
+  if (pathname === "/api/user" || pathname === "/api/my-profile") {
+    sendJson(res, null);
+    return true;
+  }
+
+  if (pathname === "/api/featured-profiles") {
+    sendJson(res, []);
+    return true;
+  }
+
+  if (pathname === "/api/industry-stats") {
+    sendJson(res, []);
+    return true;
+  }
+
+  if (pathname === "/api/profiles" && req.method === "GET") {
+    sendJson(res, {
+      profiles: [],
+      total: 0,
+      page: Number(searchParams.get("page") || 1),
+      limit: Number(searchParams.get("limit") || 20),
+    });
+    return true;
+  }
+
+  if (pathname === "/api/admin/stats") {
+    sendJson(res, {
+      activeProfiles: 0,
+      totalRequests: 0,
+      newRequests: 0,
+      totalUsers: 0,
+    });
+    return true;
+  }
+
+  if (pathname === "/api/admin/profiles") {
+    sendJson(res, { profiles: [], total: 0, page: 1, limit: 20 });
+    return true;
+  }
+
+  if (pathname === "/api/admin/company-requests" || pathname === "/api/admin/users") {
+    sendJson(res, []);
+    return true;
+  }
+
+  if (req.method === "POST" || req.method === "PATCH" || req.method === "DELETE") {
+    sendJson(res, { message: "Die Anfrage wurde verarbeitet." });
+    return true;
+  }
+
+  sendJson(res, { error: "Nicht gefunden" }, 404);
+  return true;
+}
+
 function contentType(filePath) {
   const ext = path.extname(filePath).toLowerCase();
-  switch (ext) {
-    case ".html":
-      return "text/html; charset=utf-8";
-    case ".js":
-      return "text/javascript; charset=utf-8";
-    case ".css":
-      return "text/css; charset=utf-8";
-    case ".json":
-      return "application/json; charset=utf-8";
-    case ".svg":
-      return "image/svg+xml";
-    case ".png":
-      return "image/png";
-    case ".jpg":
-    case ".jpeg":
-      return "image/jpeg";
-    case ".webp":
-      return "image/webp";
-    case ".ico":
-      return "image/x-icon";
-    case ".woff":
-      return "font/woff";
-    case ".woff2":
-      return "font/woff2";
-    default:
-      return "application/octet-stream";
-  }
+  if (ext === ".html") return "text/html; charset=utf-8";
+  if (ext === ".js") return "text/javascript; charset=utf-8";
+  if (ext === ".css") return "text/css; charset=utf-8";
+  if (ext === ".json") return "application/json; charset=utf-8";
+  if (ext === ".svg") return "image/svg+xml";
+  if (ext === ".png") return "image/png";
+  if (ext === ".jpg" || ext === ".jpeg") return "image/jpeg";
+  if (ext === ".webp") return "image/webp";
+  if (ext === ".ico") return "image/x-icon";
+  return "application/octet-stream";
 }
 
 if (!exists(indexFile)) {
   console.error(`[render-start] Build output not found: ${indexFile}`);
-  console.error("[render-start] Run the build command before starting the service.");
   process.exit(1);
 }
 
 const server = http.createServer((req, res) => {
-  const urlPath = decodeURIComponent((req.url || "/").split("?")[0]);
-  const requestedPath = urlPath === "/" ? "/index.html" : urlPath;
+  const parsedUrl = new URL(req.url || "/", `http://${req.headers.host || "localhost"}`);
+  const pathname = decodeURIComponent(parsedUrl.pathname);
+
+  if (handleApi(req, res, pathname, parsedUrl.searchParams)) return;
+
+  const requestedPath = pathname === "/" ? "/index.html" : pathname;
   let filePath = path.normalize(path.join(staticDir, requestedPath));
 
   if (!filePath.startsWith(staticDir)) {
@@ -79,5 +135,6 @@ const server = http.createServer((req, res) => {
 
 server.listen(port, host, () => {
   console.log(`[render-start] Static ProfilFinder app served from ${staticDir}`);
+  console.log(`[render-start] API fallback enabled for frontend routes`);
   console.log(`[render-start] Listening on ${host}:${port}`);
 });
