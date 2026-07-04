@@ -6,69 +6,92 @@ import { requireAuth } from "../middlewares/auth";
 
 const router = Router();
 
+function saveSession(req: any, res: any, data: unknown, status = 200) {
+  req.session.save((err: unknown) => {
+    if (err) {
+      res.status(500).json({ error: "Session konnte nicht gespeichert werden." });
+      return;
+    }
+    res.status(status).json(data);
+  });
+}
+
 router.post("/register", async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    res.status(400).json({ error: "E-Mail und Passwort erforderlich" });
-    return;
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      res.status(400).json({ error: "E-Mail und Passwort erforderlich" });
+      return;
+    }
+    if (password.length < 8) {
+      res.status(400).json({ error: "Passwort muss mindestens 8 Zeichen haben" });
+      return;
+    }
+
+    const userEmail = String(email).trim().toLowerCase();
+    const existing = await db.select().from(usersTable).where(eq(usersTable.email, userEmail)).limit(1);
+    if (existing.length > 0) {
+      res.status(400).json({ error: "E-Mail bereits registriert" });
+      return;
+    }
+
+    const hashed = await bcrypt.hash(password, 12);
+    const [user] = await db.insert(usersTable).values({ email: userEmail, password: hashed }).returning();
+    req.session.userId = user.id;
+    req.session.isAdmin = user.isAdmin;
+    saveSession(req, res, { id: user.id, email: user.email, isAdmin: user.isAdmin, status: user.status, createdAt: user.createdAt }, 201);
+  } catch {
+    res.status(500).json({ error: "Registrierung fehlgeschlagen. Bitte DATABASE_URL und Datenbanktabellen prüfen." });
   }
-  if (password.length < 8) {
-    res.status(400).json({ error: "Passwort muss mindestens 8 Zeichen haben" });
-    return;
-  }
-  const existing = await db.select().from(usersTable).where(eq(usersTable.email, email)).limit(1);
-  if (existing.length > 0) {
-    res.status(400).json({ error: "E-Mail bereits registriert" });
-    return;
-  }
-  const hashed = await bcrypt.hash(password, 12);
-  const [user] = await db.insert(usersTable).values({ email, password: hashed }).returning();
-  req.session.userId = user.id;
-  req.session.isAdmin = user.isAdmin;
-  res.status(201).json({ id: user.id, email: user.email, isAdmin: user.isAdmin, status: user.status, createdAt: user.createdAt });
 });
 
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    res.status(400).json({ error: "E-Mail und Passwort erforderlich" });
-    return;
-  }
-
-  // Admin login via env
-  if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
-    let adminUser = await db.select().from(usersTable).where(eq(usersTable.email, email)).limit(1);
-    if (adminUser.length === 0) {
-      const hashed = await bcrypt.hash(password, 12);
-      const [created] = await db.insert(usersTable).values({ email, password: hashed, isAdmin: true }).returning();
-      adminUser = [created];
-    } else if (!adminUser[0].isAdmin) {
-      await db.update(usersTable).set({ isAdmin: true }).where(eq(usersTable.id, adminUser[0].id));
-      adminUser[0].isAdmin = true;
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      res.status(400).json({ error: "E-Mail und Passwort erforderlich" });
+      return;
     }
-    req.session.userId = adminUser[0].id;
-    req.session.isAdmin = true;
-    res.json({ id: adminUser[0].id, email: adminUser[0].email, isAdmin: true, status: adminUser[0].status, createdAt: adminUser[0].createdAt });
-    return;
-  }
 
-  const [user] = await db.select().from(usersTable).where(eq(usersTable.email, email)).limit(1);
-  if (!user) {
-    res.status(401).json({ error: "Ungültige Anmeldedaten" });
-    return;
+    const userEmail = String(email).trim().toLowerCase();
+    const adminEmail = String(process.env.ADMIN_EMAIL || "").trim().toLowerCase();
+
+    if (userEmail === adminEmail && password === process.env.ADMIN_PASSWORD) {
+      let adminUser = await db.select().from(usersTable).where(eq(usersTable.email, userEmail)).limit(1);
+      if (adminUser.length === 0) {
+        const hashed = await bcrypt.hash(password, 12);
+        const [created] = await db.insert(usersTable).values({ email: userEmail, password: hashed, isAdmin: true }).returning();
+        adminUser = [created];
+      } else if (!adminUser[0].isAdmin) {
+        await db.update(usersTable).set({ isAdmin: true }).where(eq(usersTable.id, adminUser[0].id));
+        adminUser[0].isAdmin = true;
+      }
+      req.session.userId = adminUser[0].id;
+      req.session.isAdmin = true;
+      saveSession(req, res, { id: adminUser[0].id, email: adminUser[0].email, isAdmin: true, status: adminUser[0].status, createdAt: adminUser[0].createdAt });
+      return;
+    }
+
+    const [user] = await db.select().from(usersTable).where(eq(usersTable.email, userEmail)).limit(1);
+    if (!user) {
+      res.status(401).json({ error: "Ungültige Anmeldedaten" });
+      return;
+    }
+    const valid = await bcrypt.compare(password, user.password);
+    if (!valid) {
+      res.status(401).json({ error: "Ungültige Anmeldedaten" });
+      return;
+    }
+    if (user.status !== "active") {
+      res.status(401).json({ error: "Konto ist deaktiviert" });
+      return;
+    }
+    req.session.userId = user.id;
+    req.session.isAdmin = user.isAdmin;
+    saveSession(req, res, { id: user.id, email: user.email, isAdmin: user.isAdmin, status: user.status, createdAt: user.createdAt });
+  } catch {
+    res.status(500).json({ error: "Anmeldung fehlgeschlagen. Bitte DATABASE_URL und Datenbanktabellen prüfen." });
   }
-  const valid = await bcrypt.compare(password, user.password);
-  if (!valid) {
-    res.status(401).json({ error: "Ungültige Anmeldedaten" });
-    return;
-  }
-  if (user.status !== "active") {
-    res.status(401).json({ error: "Konto ist deaktiviert" });
-    return;
-  }
-  req.session.userId = user.id;
-  req.session.isAdmin = user.isAdmin;
-  res.json({ id: user.id, email: user.email, isAdmin: user.isAdmin, status: user.status, createdAt: user.createdAt });
 });
 
 router.post("/logout", (req, res) => {
