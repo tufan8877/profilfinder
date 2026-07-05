@@ -1,7 +1,7 @@
 import { Router, type IRouter } from "express";
 import healthRouter from "./health";
 import debugRouter from "./debug";
-import authRouter from "./auth";
+import authRouter from "./auth-simple";
 import profilesRouter from "./profiles";
 import companyRequestsRouter from "./company-requests";
 import adminRouter from "./admin";
