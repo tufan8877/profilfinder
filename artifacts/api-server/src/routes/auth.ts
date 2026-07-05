@@ -6,14 +6,18 @@ import { requireAuth } from "../middlewares/auth";
 
 const router = Router();
 
-function saveSession(req: any, res: any, data: unknown, status = 200) {
-  req.session.save((err: unknown) => {
-    if (err) {
-      res.status(500).json({ error: "Session konnte nicht gespeichert werden." });
-      return;
-    }
-    res.status(status).json(data);
+function saveSession(req: any, res: any, data: any, status = 200) {
+  res.cookie("pf_uid", String(data.id), {
+    httpOnly: false,
+    sameSite: "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
   });
+  res.cookie("pf_admin", data.isAdmin ? "1" : "0", {
+    httpOnly: false,
+    sameSite: "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+  res.status(status).json(data);
 }
 
 router.post("/register", async (req, res) => {
@@ -101,6 +105,8 @@ router.post("/login", async (req, res) => {
 });
 
 router.post("/logout", (req, res) => {
+  res.clearCookie("pf_uid");
+  res.clearCookie("pf_admin");
   req.session.destroy(() => {
     res.json({ message: "Abgemeldet" });
   });
